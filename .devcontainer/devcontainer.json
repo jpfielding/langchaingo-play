@@ -24,22 +24,22 @@
     {
       "type": "bind",
       "source": "${localEnv:HOME}/.gitconfig",
-      "target": "/home/${localEnv:USER:prosight}/.gitconfig"
+      "target": "/home/${localEnv:USER:playa}/.gitconfig"
     },
     {
       "type": "bind",
       "source": "${localEnv:HOME}/.git-credentials",
-      "target": "/home/${localEnv:USER:prosight}/.git-credentials"
+      "target": "/home/${localEnv:USER:playa}/.git-credentials"
     },
     {
       "type": "bind",
       "source": "${localEnv:HOME}/.netrc",
-      "target": "/home/${localEnv:USER:prosight}/.netrc"
+      "target": "/home/${localEnv:USER:playa}/.netrc"
     },
     {
       "type": "bind",
       "source": "${localEnv:HOME}/.ssh",
-      "target": "/home/${localEnv:USER:prosight}/.ssh"
+      "target": "/home/${localEnv:USER:playa}/.ssh"
     },
     {
       "type": "bind",
@@ -54,7 +54,7 @@
     {
       "type": "bind",
       "source": "${localEnv:HOME}/.bash_history_${localWorkspaceFolderBasename}",
-      "target": "/home/${localEnv:USER:prosight}/.bash_history"
+      "target": "/home/${localEnv:USER:playa}/.bash_history"
     }
   ],
   "workspaceMount": "source=${localWorkspaceFolder},target=/workdir/${localWorkspaceFolderBasename},type=bind,consistency=cached",
