@@ -35,9 +35,15 @@ RUN groupadd --gid ${USER_GID} ${USERNAME} && \
 ########### NON ROOT FROM HERE DOWN ###########
 USER ${USERNAME}
 
+# envs    
+ENV HOME "/home/${USERNAME}"
+ENV SDK_HOME ${HOME}/sdk
+ENV PATH ${HOME}/bin:${PATH}
+
 # pretty bash
 COPY --chown=${USERNAME}:${USERNAME} .bash_pretty ${HOME}/.bash_pretty
 COPY --chown=${USERNAME}:${USERNAME} .gitconfig ${HOME}/.gitconfig
+
 RUN set -eux && \
     echo "source ${HOME}/.bash_pretty" >> ${HOME}/.bashrc
 
@@ -46,11 +52,6 @@ RUN set -eux && \
     sudo mkdir -p /workdir/${REPO_NAME} && \
     sudo chown ${USERNAME}:${USERNAME} /workdir
     
-# envs    
-ENV HOME "/home/${USERNAME}"
-ENV SDK_HOME ${HOME}/sdk
-ENV PATH ${HOME}/bin:${PATH}
-
 # go
 ENV GO_VERSION "1.25.0"
 ENV GOPATH ${SDK_HOME}/go
@@ -68,7 +69,6 @@ RUN set -eux && \
     curl -fsSL https://ollama.com/install.sh | sh
     
 # gemini-cli (set GEMINI_API_KEY for higher rate limit)
-ENV GEMINI_API_KEY=""
 ENV NVM_DIR "${HOME}/.nvm"
 RUN mkdir -p ${NVM_DIR} && \
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
