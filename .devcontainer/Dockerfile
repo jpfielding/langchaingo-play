@@ -37,6 +37,7 @@ USER ${USERNAME}
 
 # pretty bash
 COPY --chown=${USERNAME}:${USERNAME} .bash_pretty ${HOME}/.bash_pretty
+COPY --chown=${USERNAME}:${USERNAME} .gitconfig ${HOME}/.gitconfig
 RUN set -eux && \
     echo "source ${HOME}/.bash_pretty" >> ${HOME}/.bashrc
 
