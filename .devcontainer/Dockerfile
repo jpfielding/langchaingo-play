@@ -61,7 +61,8 @@ RUN set -eux && \
     tar xzf go.tar.gz && mv go ${SDK_HOME} && rm /tmp/go.tar.gz && \
     cd ${SDK_HOME} && mv go go${GO_VERSION} && ln -s go${GO_VERSION} go
 
-# ollama serve & && ollama run gpt-oss:20b # see scripts/get-model
+# ollama serve & && ollama run llama3.2 # see scripts/ollama-serve-model
+ENV MODEL="llama3.2"
 RUN set -eux && \
     curl -fsSL https://ollama.com/install.sh | sh
     

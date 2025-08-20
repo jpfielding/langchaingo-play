@@ -1,0 +1,9 @@
+#!/bin/bash
+
+MODEL=${MODEL:-$1}
+MODEL=${MODEL:-"llama3.2"}
+
+PROMPT=${PROMPT:-$1}
+PROMPT=${PROMPT:-"Why is the sky blue?"}
+
+curl -v http://localhost:11434/api/generate -d "{\"model\": \"${MODEL}\", \"prompt\":\"${PROMPT}\"}"
