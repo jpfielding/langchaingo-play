@@ -1,0 +1,5 @@
+#!/bin/bash
+
+(ollama serve > /dev/null 2>&1 &) && \
+    ollama pull gpt-oss:20b && \
+    pkill ollama

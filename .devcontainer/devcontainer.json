@@ -1,0 +1,72 @@
+{
+  "name": "${localWorkspaceFolderBasename}",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".",
+    "target": "user",
+    "args": {
+      "USERNAME": "${localEnv:USER:playa}"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "remote.autoForwardPorts": false
+      },
+      "extensions": [
+        "golang.go",
+        "GitHub.copilot",
+        "GitHub.copilot-chat"
+      ]
+    }
+  },
+  "mounts": [
+    {
+      "type": "bind",
+      "source": "${localEnv:HOME}/.gitconfig",
+      "target": "/home/${localEnv:USER:prosight}/.gitconfig"
+    },
+    {
+      "type": "bind",
+      "source": "${localEnv:HOME}/.git-credentials",
+      "target": "/home/${localEnv:USER:prosight}/.git-credentials"
+    },
+    {
+      "type": "bind",
+      "source": "${localEnv:HOME}/.netrc",
+      "target": "/home/${localEnv:USER:prosight}/.netrc"
+    },
+    {
+      "type": "bind",
+      "source": "${localEnv:HOME}/.ssh",
+      "target": "/home/${localEnv:USER:prosight}/.ssh"
+    },
+    {
+      "type": "bind",
+      "source": "/var/run/docker.sock",
+      "target": "/var/run/docker.sock"
+    },
+    {
+      "type": "bind",
+      "source": "${localEnv:HOME}/.gemini",
+      "target": "/home/${localEnv:USER:play}/.gemini"
+    },
+    {
+      "type": "bind",
+      "source": "${localEnv:HOME}/.bash_history_${localWorkspaceFolderBasename}",
+      "target": "/home/${localEnv:USER:prosight}/.bash_history"
+    }
+  ],
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workdir/${localWorkspaceFolderBasename},type=bind,consistency=cached",
+  "workspaceFolder": "/workdir/${localWorkspaceFolderBasename}",
+  "runArgs": [],
+  "initializeCommand": {
+    "netrc": "touch ${localEnv:HOME}/.netrc",
+    "ssh dir": "mkdir -p ${localEnv:HOME}/.ssh",
+    "gitconfig": "touch ${localEnv:HOME}/.gitconfig",
+    "git creds": "touch ${localEnv:HOME}/.git-credentials",
+    "gemini": "mkdir -p ${localEnv:HOME}/.gemini || true",
+    "bash history": "touch ${localEnv:HOME}/.bash_history_${localWorkspaceFolderBasename}"
+  },
+  "forwardPorts": []
+}
