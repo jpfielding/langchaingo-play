@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"os"
 	"slices"
 
 	"github.com/tmc/langchaingo/llms"
@@ -14,19 +13,16 @@ import (
 )
 
 var flagVerbose = flag.Bool("v", false, "verbose mode")
+var flagModel = flag.String("model", "llama3.2", "model name")
+var flagURL = flag.String("url", "localhost:11434", "server url")
 
 func main() {
 	flag.Parse()
-	// allow specifying your own model via OLLAMA_TEST_MODEL
+	// allow specifying your own model via OLLAMA_MODEL
 	// (same as the Ollama unit tests).
-	model := "llama3.2"
-	if v := os.Getenv("OLLAMA_TEST_MODEL"); v != "" {
-		model = v
-	}
-
 	llm, err := ollama.New(
-		ollama.WithModel(model),
-		ollama.WithFormat("json"),
+		ollama.WithServerURL(*flagURL),
+		ollama.WithModel(*flagModel),
 	)
 	if err != nil {
 		log.Fatal(err)

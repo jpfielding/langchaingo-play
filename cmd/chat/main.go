@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 
@@ -9,8 +10,17 @@ import (
 	"github.com/tmc/langchaingo/llms/ollama"
 )
 
+var flagModel = flag.String("model", "llama3.2", "model name")
+var flagURL = flag.String("url", "http://localhost:11434", "server url")
+
 func main() {
-	llm, err := ollama.New(ollama.WithModel("llama3.2"))
+	flag.Parse()
+	// allow specifying your own model via OLLAMA_MODEL
+	// (same as the Ollama unit tests).
+	llm, err := ollama.New(
+		ollama.WithServerURL(*flagURL),
+		ollama.WithModel(*flagModel),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}

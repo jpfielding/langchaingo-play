@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -15,12 +16,21 @@ import (
 	"github.com/tmc/langchaingo/vectorstores/chroma"
 )
 
+var flagModel = flag.String("model", "llama3.2", "model name")
+var flagURL = flag.String("url", "localhost:11434", "server url")
+
 func main() {
-	ollamaLLM, err := ollama.New(ollama.WithModel("llama3.2"))
+	flag.Parse()
+	// allow specifying your own model via OLLAMA_MODEL
+	// (same as the Ollama unit tests).
+	llm, err := ollama.New(
+		ollama.WithServerURL(*flagURL),
+		ollama.WithModel(*flagModel),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
-	ollamaEmbeder, err := embeddings.NewEmbedder(ollamaLLM)
+	ollamaEmbeder, err := embeddings.NewEmbedder(llm)
 	if err != nil {
 		log.Fatal(err)
 	}
