@@ -18,6 +18,9 @@ github.com/dlclark/regexp2/syntax
 # github.com/google/uuid v1.6.0
 ## explicit
 github.com/google/uuid
+# github.com/jpfielding/gowirelog v0.0.0-20211207135852-215e6dc55529
+## explicit; go 1.10
+github.com/jpfielding/gowirelog/wirelog
 # github.com/oklog/ulid v1.3.1
 ## explicit
 github.com/oklog/ulid
@@ -38,3 +41,7 @@ github.com/tmc/langchaingo/vectorstores/chroma
 # golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
 ## explicit; go 1.20
 golang.org/x/exp/maps
+# golang.org/x/net v0.25.0
+## explicit; go 1.18
+golang.org/x/net/internal/socks
+golang.org/x/net/proxy

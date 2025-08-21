@@ -4,6 +4,7 @@ go 1.25.0
 
 require (
 	github.com/google/uuid v1.6.0
+	github.com/jpfielding/gowirelog v0.0.0-20211207135852-215e6dc55529
 	github.com/tmc/langchaingo v0.1.13
 )
 
@@ -14,4 +15,5 @@ require (
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/pkoukk/tiktoken-go v0.1.6 // indirect
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1 // indirect
+	golang.org/x/net v0.25.0 // indirect
 )

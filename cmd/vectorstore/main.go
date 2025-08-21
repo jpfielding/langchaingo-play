@@ -5,10 +5,12 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/jpfielding/gowirelog/wirelog"
 	"github.com/tmc/langchaingo/embeddings"
 	"github.com/tmc/langchaingo/llms/ollama"
 	"github.com/tmc/langchaingo/schema"
@@ -17,13 +19,22 @@ import (
 )
 
 var flagModel = flag.String("model", "llama3.2", "model name")
-var flagURL = flag.String("url", "localhost:11434", "server url")
+var flagURL = flag.String("url", "http://localhost:11434", "server url")
+var flagWirelog = flag.Bool("wirelog", false, "enable wirelog")
 
 func main() {
 	flag.Parse()
+	transport := wirelog.NewHTTPTransport()
+	if *flagWirelog {
+		_ = wirelog.LogToWriter(transport, os.Stderr, true, true)
+	}
+	cl := &http.Client{
+		Transport: transport,
+	}
 	// allow specifying your own model via OLLAMA_MODEL
 	// (same as the Ollama unit tests).
 	llm, err := ollama.New(
+		ollama.WithHTTPClient(cl),
 		ollama.WithServerURL(*flagURL),
 		ollama.WithModel(*flagModel),
 	)
