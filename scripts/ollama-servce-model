@@ -3,4 +3,11 @@
 MODEL=${MODEL:-$1}
 MODEL=${MODEL:-"llama3.2"}
 
-(ollama serve > /dev/null 2>&1 &) && ollama pull "${MODEL}" 
+ollama serve > /dev/null 2>&1 &
+
+# Wait for the server to be ready
+while ! curl -s -o /dev/null http://localhost:11434; do
+    sleep 1
+done
+
+ollama pull "${MODEL}"

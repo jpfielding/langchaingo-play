@@ -15,6 +15,7 @@
       },
       "extensions": [
         "golang.go",
+        "eamodio.gitlens",
         "GitHub.copilot",
         "GitHub.copilot-chat"
       ]
