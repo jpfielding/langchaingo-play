@@ -1,3 +1,16 @@
+# github.com/Masterminds/semver v1.5.0
+## explicit
+github.com/Masterminds/semver
+# github.com/amikos-tech/chroma-go v0.1.2
+## explicit; go 1.18
+github.com/amikos-tech/chroma-go
+github.com/amikos-tech/chroma-go/collection
+github.com/amikos-tech/chroma-go/metadata
+github.com/amikos-tech/chroma-go/openai
+github.com/amikos-tech/chroma-go/swagger
+github.com/amikos-tech/chroma-go/types
+github.com/amikos-tech/chroma-go/where
+github.com/amikos-tech/chroma-go/where_document
 # github.com/dlclark/regexp2 v1.10.0
 ## explicit; go 1.13
 github.com/dlclark/regexp2
@@ -5,13 +18,23 @@ github.com/dlclark/regexp2/syntax
 # github.com/google/uuid v1.6.0
 ## explicit
 github.com/google/uuid
+# github.com/oklog/ulid v1.3.1
+## explicit
+github.com/oklog/ulid
 # github.com/pkoukk/tiktoken-go v0.1.6
 ## explicit; go 1.19
 github.com/pkoukk/tiktoken-go
 # github.com/tmc/langchaingo v0.1.13
 ## explicit; go 1.22.0
 github.com/tmc/langchaingo/callbacks
+github.com/tmc/langchaingo/embeddings
+github.com/tmc/langchaingo/internal/sliceutil
 github.com/tmc/langchaingo/llms
 github.com/tmc/langchaingo/llms/ollama
 github.com/tmc/langchaingo/llms/ollama/internal/ollamaclient
 github.com/tmc/langchaingo/schema
+github.com/tmc/langchaingo/vectorstores
+github.com/tmc/langchaingo/vectorstores/chroma
+# golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
+## explicit; go 1.20
+golang.org/x/exp/maps
