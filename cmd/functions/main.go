@@ -160,34 +160,8 @@ To use a tool, respond with a JSON object with the following structure:
 }
 `, string(bs))
 }
+
 func getCurrentWeather(location string, unit string) (string, error) {
-	apiKey := os.Getenv("WEATHER_API_KEY")
-	uri := fmt.Sprintf("http://api.weatherapi.com/v1/forecast.json?key=%s&q=%s&days=1&api=no&alerts=no", apiKey, location)
-	res, err := http.Get(uri)
-	if err != nil {
-		panic(err)
-	}
-	defer res.Body.Close()
-	if res.StatusCode != 200 {
-		panic("Weather API not available")
-	}
-	var weather Weather
-	if err = json.NewDecoder(res.Body).Decode(&weather); err != nil {
-		panic(err)
-	}
-	weatherInfo := map[string]any{
-		"location":    weather.Location.Name,
-		"temperature": weather.Current.TempC,
-		"unit":        "celsius",
-		"forecast":    []string{weather.Current.Condition.Text},
-	}
-	b, err := json.Marshal(weatherInfo)
-	if err != nil {
-		return "", err
-	}
-	return string(b), nil
-}
-func GetDummyWeather(location string, unit string) (string, error) {
 	weatherInfo := map[string]any{
 		"location":    location,
 		"temperature": "6",
@@ -231,31 +205,4 @@ var functions = []llms.FunctionDefinition{
 			"required": ["response"]
 		}`),
 	},
-}
-
-type Weather struct {
-	Location struct {
-		Name    string `json:"name"`
-		Country string `json:"country"`
-	} `json:"location"`
-
-	Current struct {
-		TempC     float64 `json:"temp_c"`
-		Condition struct {
-			Text string `json:"text"`
-		} `json:"condition"`
-	} `json:"current"`
-
-	Forecast struct {
-		ForecastDay []struct {
-			Hour []struct {
-				TimeEpoch int64   `json:"time_epoch"`
-				TempC     float64 `json:"temp_c"`
-				Condition struct {
-					Text string `json:"text"`
-				} `json:"condition"`
-				ChanceOfRain float64 `json:"chance_of_rain"`
-			} `json:"hour"`
-		} `json:"forecastday"`
-	} `json:"forecast"`
 }
