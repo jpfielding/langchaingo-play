@@ -19,6 +19,7 @@ var flagVerbose = flag.Bool("v", false, "verbose mode")
 var flagModel = flag.String("model", "llama3.2", "model name")
 var flagURL = flag.String("url", "http://localhost:11434", "server url")
 var flagWirelog = flag.Bool("wirelog", false, "enable wirelog")
+var flagLocation = flag.String("location", "Beijing", "location for weather query")
 
 func main() {
 	flag.Parse()
@@ -44,7 +45,7 @@ func main() {
 
 	// system message defines the available tools.
 	msgs = append(msgs, llms.TextParts(llms.ChatMessageTypeSystem, systemMessage()))
-	msgs = append(msgs, llms.TextParts(llms.ChatMessageTypeHuman, "What's the weather like in Beijing?"))
+	msgs = append(msgs, llms.TextParts(llms.ChatMessageTypeHuman, fmt.Sprintf("What's the weather like in %s?", *flagLocation)))
 
 	ctx := context.Background()
 
@@ -80,8 +81,9 @@ func main() {
 }
 
 type Call struct {
-	Tool  string         `json:"tool"`
-	Input map[string]any `json:"tool_input"`
+	Tool     string         `json:"tool"`
+	Input    map[string]any `json:"tool_input"`
+	Response string         `json:"response"`
 }
 
 func unmarshalCall(input string) *Call {
@@ -119,11 +121,11 @@ func dispatchCall(c *Call) (llms.MessageContent, bool) {
 		}
 		return llms.TextParts(llms.ChatMessageTypeHuman, weather), true
 	case "finalResponse":
-		resp, ok := c.Input["response"].(string)
-		if !ok {
-			log.Fatal("invalid input")
-		}
-
+		// resp, ok := c.Input["response"].(string)
+		// if !ok {
+		// 	log.Fatal("invalid input")
+		// }
+		resp := c.Response
 		log.Printf("Final response: %v", resp)
 
 		return llms.MessageContent{}, false
