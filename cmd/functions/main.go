@@ -90,8 +90,9 @@ type Response struct {
 }
 
 type Call struct {
-	Tool  string         `json:"tool"`
-	Input map[string]any `json:"tool_input"`
+	Tool     string         `json:"tool"`
+	Input    map[string]any `json:"tool_input"`
+	Response string         `json:"response"`
 }
 
 func dispatchCall(c Call) (llms.MessageContent, bool) {
@@ -123,7 +124,7 @@ func dispatchCall(c Call) (llms.MessageContent, bool) {
 	case "finalResponse":
 		resp, ok := c.Input["response"].(string)
 		if !ok {
-			log.Fatal("invalid input")
+			resp = c.Response
 		}
 		log.Printf("Final response: %v", resp)
 

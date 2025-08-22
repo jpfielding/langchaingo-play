@@ -17,7 +17,7 @@
         "env": {
         },
         "args": [
-            "-location", "Beijing",
+            "-location", "Morgantown, WV",
             "-model", "llama3.2",
             "-url", "http://host.docker.internal:11434",
             "-wirelog", "false",
