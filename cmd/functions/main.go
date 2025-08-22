@@ -58,7 +58,7 @@ func main() {
 		choice1 := resp.Choices[0]
 		msgs = append(msgs, llms.TextParts(llms.ChatMessageTypeAI, choice1.Content))
 		call := Call{}
-		final := Response{}
+		final := Response{} // this shouldnt be necessary, but Ollama doesn't always respond with a function call.
 
 		if err = json.Unmarshal([]byte(choice1.Content), &call); err == nil && call.Tool != "" {
 			log.Printf("Call: %v", call.Tool)
@@ -90,17 +90,8 @@ type Response struct {
 }
 
 type Call struct {
-	Tool     string         `json:"tool"`
-	Input    map[string]any `json:"tool_input"`
-	Response string         `json:"response"`
-}
-
-func unmarshalCall(input string) *Call {
-	var c Call
-	if err := json.Unmarshal([]byte(input), &c); err == nil && c.Tool != "" {
-		return &c
-	}
-	return nil
+	Tool  string         `json:"tool"`
+	Input map[string]any `json:"tool_input"`
 }
 
 func dispatchCall(c Call) (llms.MessageContent, bool) {
@@ -130,11 +121,10 @@ func dispatchCall(c Call) (llms.MessageContent, bool) {
 		}
 		return llms.TextParts(llms.ChatMessageTypeHuman, weather), true
 	case "finalResponse":
-		// resp, ok := c.Input["response"].(string)
-		// if !ok {
-		// 	log.Fatal("invalid input")
-		// }
-		resp := c.Response
+		resp, ok := c.Input["response"].(string)
+		if !ok {
+			log.Fatal("invalid input")
+		}
 		log.Printf("Final response: %v", resp)
 
 		return llms.MessageContent{}, false
