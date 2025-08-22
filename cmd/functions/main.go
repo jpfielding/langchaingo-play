@@ -57,17 +57,22 @@ func main() {
 
 		choice1 := resp.Choices[0]
 		msgs = append(msgs, llms.TextParts(llms.ChatMessageTypeAI, choice1.Content))
+		call := Call{}
+		final := Response{}
 
-		if c := unmarshalCall(choice1.Content); c != nil {
-			log.Printf("Call: %v", c.Tool)
+		if err = json.Unmarshal([]byte(choice1.Content), &call); err == nil && call.Tool != "" {
+			log.Printf("Call: %v", call.Tool)
 			if *flagVerbose {
-				log.Printf("Call: %v (raw: %v)", c.Tool, choice1.Content)
+				log.Printf("Call: %v (raw: %v)", call.Tool, choice1.Content)
 			}
-			msg, cont := dispatchCall(c)
+			msg, cont := dispatchCall(call)
 			if !cont {
-				break
+				break // if the response is propertly formatted... 🙏
 			}
 			msgs = append(msgs, msg)
+		} else if err = json.Unmarshal([]byte(choice1.Content), &final); err == nil && final.Final != "" {
+			log.Printf("Final response: %v", final.Final)
+			return
 		} else {
 			// Ollama doesn't always respond with a function call, let it try again.
 			log.Printf("Not a call: %v", choice1.Content)
@@ -78,6 +83,10 @@ func main() {
 			log.Fatal("retries exhausted")
 		}
 	}
+}
+
+type Response struct {
+	Final string `json:"finalResponse"`
 }
 
 type Call struct {
@@ -94,7 +103,7 @@ func unmarshalCall(input string) *Call {
 	return nil
 }
 
-func dispatchCall(c *Call) (llms.MessageContent, bool) {
+func dispatchCall(c Call) (llms.MessageContent, bool) {
 	// ollama doesn't always respond with a *valid* function call. As we're using prompt
 	// engineering to inject the tools, it may hallucinate.
 	if !validTool(c.Tool) {
