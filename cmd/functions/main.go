@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"slices"
 
 	"github.com/jpfielding/gowirelog/wirelog"
 	"github.com/tmc/langchaingo/llms"
@@ -65,10 +64,11 @@ func main() {
 			if *flagVerbose {
 				log.Printf("Call: %v (raw: %v)", call.Tool, choice1.Content)
 			}
-			msg, cont := dispatchCall(call)
-			if !cont {
-				break // if the response is propertly formatted... 🙏
+			if call.Tool == "finalResponse" {
+				log.Printf("Final response: %v", call.Response)
+				return
 			}
+			msg := dispatchCall(call)
 			msgs = append(msgs, msg)
 		} else if err = json.Unmarshal([]byte(choice1.Content), &final); err == nil && final.Final != "" {
 			log.Printf("Final response: %v", final.Final)
@@ -95,18 +95,10 @@ type Call struct {
 	Response string         `json:"response"`
 }
 
-func dispatchCall(c Call) (llms.MessageContent, bool) {
-	// ollama doesn't always respond with a *valid* function call. As we're using prompt
-	// engineering to inject the tools, it may hallucinate.
-	if !validTool(c.Tool) {
-		log.Printf("invalid function call: %#v, prompting model to try again", c)
-		return llms.TextParts(llms.ChatMessageTypeHuman,
-			"Tool does not exist, please try again."), true
-	}
-
+func dispatchCall(c Call) llms.MessageContent {
 	// we could make this more dynamic, by parsing the function schema.
 	switch c.Tool {
-	case "getCurrentWeather":
+	case "get_current_weather":
 		loc, ok := c.Input["location"].(string)
 		if !ok {
 			log.Fatal("invalid input")
@@ -115,32 +107,17 @@ func dispatchCall(c Call) (llms.MessageContent, bool) {
 		if !ok {
 			log.Fatal("invalid input")
 		}
-
-		weather, err := getCurrentWeather(loc, unit)
+		weather, err := get_current_weather(loc, unit)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
-		return llms.TextParts(llms.ChatMessageTypeHuman, weather), true
-	case "finalResponse":
-		resp, ok := c.Input["response"].(string)
-		if !ok {
-			resp = c.Response
-		}
-		log.Printf("Final response: %v", resp)
-
-		return llms.MessageContent{}, false
+		return llms.TextParts(llms.ChatMessageTypeHuman, weather)
 	default:
-		// we already checked above if we had a valid tool.
-		panic("unreachable")
+		return llms.TextParts(
+			llms.ChatMessageTypeHuman,
+			"Tool does not exist, please try again.",
+		)
 	}
-}
-
-func validTool(name string) bool {
-	var valid []string
-	for _, v := range functions {
-		valid = append(valid, v.Name)
-	}
-	return slices.Contains(valid, name)
 }
 
 func systemMessage() string {
@@ -161,7 +138,7 @@ To use a tool, respond with a JSON object with the following structure:
 `, string(bs))
 }
 
-func getCurrentWeather(location string, unit string) (string, error) {
+func get_current_weather(location string, unit string) (string, error) {
 	weatherInfo := map[string]any{
 		"location":    location,
 		"temperature": "6",
@@ -181,7 +158,7 @@ func getCurrentWeather(location string, unit string) (string, error) {
 
 var functions = []llms.FunctionDefinition{
 	{
-		Name:        "getCurrentWeather",
+		Name:        "get_current_weather",
 		Description: "Get the current weather in a given location",
 		Parameters: json.RawMessage(`{
 			"type": "object", 
