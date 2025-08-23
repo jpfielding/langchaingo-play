@@ -20,6 +20,7 @@ import (
 
 var flagModel = flag.String("model", "llama3.2", "model name")
 var flagURL = flag.String("url", "http://localhost:11434", "server url")
+var flagChromaURL = flag.String("chroma-url", "http://localhost:8000", "Chroma server url")
 var flagWirelog = flag.Bool("wirelog", false, "enable wirelog")
 
 func main() {
@@ -48,7 +49,7 @@ func main() {
 
 	// Create a new Chroma vector store.
 	store, errNs := chroma.New(
-		chroma.WithChromaURL(os.Getenv("CHROMA_URL")),
+		chroma.WithChromaURL(*flagChromaURL),
 		chroma.WithEmbedder(ollamaEmbeder),
 		chroma.WithDistanceFunction("cosine"),
 		chroma.WithNameSpace(uuid.New().String()),

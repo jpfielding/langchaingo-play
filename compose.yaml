@@ -1,0 +1,65 @@
+services:
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    depends_on: [otel-collector]
+    networks:
+      - internal
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.111.0
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ${PWD}/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    networks:
+      - internal
+  server:
+    image: chromadb/chroma
+    volumes:
+      - chroma_data:/data
+    ports:
+      - "8000:8000"
+    networks:
+      - internal
+    environment:
+      - CHROMA_OPEN_TELEMETRY__ENDPOINT=http://otel-collector:4317/
+      - CHROMA_OPEN_TELEMETRY__SERVICE_NAME=chroma
+    depends_on:
+      - otel-collector
+      - zipkin
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    #command: ollama serve # No "command" field needed here, as the image's default entrypoint
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - internal
+    restart: always
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 1s # Check every 10 seconds
+      timeout: 100s # Allow 5 seconds for the check to complete
+      retries: 100 # Retry 5 times before marking as unhealthy
+      start_period: 5s # Grace period before counting failures    
+
+  ollama-pull:
+    image: docker/genai:ollama-pull # Or a custom image for model pulling
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - internal
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - LLM=llama3.2 # Specify the model to pull
+      # Add more environment variables for other models if needed
+
+networks:
+  internal:
+
+volumes:
+  chroma_data:
+  ollama_data:
