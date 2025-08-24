@@ -14,7 +14,7 @@ services:
     networks:
       - internal
   server:
-    image: chromadb/chroma
+    image: chromadb/chroma:0.4.24 # latest is not compatible with ollama vectorstore examples
     volumes:
       - chroma_data:/data
     ports:
