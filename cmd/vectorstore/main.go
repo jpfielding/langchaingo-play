@@ -97,7 +97,7 @@ func main() {
 			query:        "Which of these are cities are located in Japan?",
 			numDocuments: 5,
 			options: []vectorstores.Option{
-				vectorstores.WithScoreThreshold(0.8),
+				vectorstores.WithScoreThreshold(0.3),
 			},
 		},
 		{
@@ -105,7 +105,7 @@ func main() {
 			query:        "Which of these are cities are located in South America?",
 			numDocuments: 1,
 			options: []vectorstores.Option{
-				vectorstores.WithScoreThreshold(0.8),
+				vectorstores.WithScoreThreshold(0.3),
 			},
 		},
 		{
